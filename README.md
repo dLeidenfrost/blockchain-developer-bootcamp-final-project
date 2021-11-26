@@ -1,6 +1,8 @@
 # blockchain-developer-bootcamp-final-project
 
-## Solution overview
+## Prenditas - Second hand kid's clothes
+
+### Solution overview
 
 - Let users connect with their metamask wallet
 - Users can list a new piece of clothing on the site
