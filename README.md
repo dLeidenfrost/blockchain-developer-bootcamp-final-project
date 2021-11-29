@@ -18,3 +18,16 @@
 
 ---
 
+### Tests
+
+Start ganache-cli:
+
+> ganache-cli
+
+Note: Using default address **8545**
+
+> truffle compile
+
+> truffle migrate
+
+> truffle test
