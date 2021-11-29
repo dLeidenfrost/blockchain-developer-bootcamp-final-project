@@ -1,9 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.22 <0.9.0;
+import "@openzeppelin/contracts/access/AccessControl.sol";
+// import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
-contract ClothingExchange {
+pragma solidity ^0.8.7;
 
-  address owner;
+contract ClothingExchange is AccessControl {
+
+  // AggregatorV3Interface internal priceFeed;
+  bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
   enum State {
     LISTED,
@@ -43,7 +47,7 @@ contract ClothingExchange {
 
   // Modifiers
   modifier isOwner () {
-    require (owner == msg.sender);
+    require (hasRole(ADMIN_ROLE, msg.sender), "Is not owner");
     _;
   }
 
@@ -89,9 +93,11 @@ contract ClothingExchange {
   event LogClothingBought (address buyer, uint indexed clothId);
   event LogClothShipped (address seller, uint indexed clothId);
   event LogClothReceived (address buyer, uint indexed clothId);
+  event LogOwnerCall (address owner);
 
   constructor () {
-    owner = msg.sender;
+    _setupRole(ADMIN_ROLE, msg.sender);
+    // priceFeed = AggregatorV3Interface(0x8A753747A1Fa494EC906cE90E9f37563A8AF630e);
   }
 
   function listClothingOnSell (
@@ -177,7 +183,6 @@ contract ClothingExchange {
     emit LogClothingBought(msg.sender, clothId);
     return sent;
   }
-
 
   function shipClothing (uint clothId) verifyCaller(clothing[clothId].seller) isSold(clothId) public {
     Cloth storage c = clothing[clothId];
