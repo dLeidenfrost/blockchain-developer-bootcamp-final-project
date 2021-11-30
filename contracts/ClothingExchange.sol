@@ -10,6 +10,7 @@ contract ClothingExchange is AccessControl {
   bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
   enum State {
+    EMPTY,
     LISTED,
     SOLD,
     SHIPPED,
@@ -57,11 +58,7 @@ contract ClothingExchange is AccessControl {
   }
 
   modifier isListed (uint clothId) {
-    require (
-      clothing[clothId].clothId > 0
-      &&
-      clothing[clothId].state == State.LISTED
-    );
+    require (clothing[clothId].state == State.LISTED);
     _;
   }
 
@@ -85,9 +82,17 @@ contract ClothingExchange is AccessControl {
     require (msg.value >= price);
     _;
   }
+  modifier verifyExcessAmount (uint price) {
+    _;
+    uint refundValue = msg.value - price;
+    if (refundValue > 0) {
+      (bool _sent,) = msg.sender.call{value: refundValue}("");
+      require(_sent);
+    }
+  }
 
   // Events
-  event LogListClothingForSale (address seller, uint indexed clothId);
+  event LogListClothingForSale (address seller, uint indexed clothCounter);
   event LogAddedBargain (address buyer, uint indexed clothId, uint newPrice);
   event LogConfirmedNewPrice (address buyer, uint indexed clothId, uint confirmedPrice);
   event LogClothingBought (address buyer, uint indexed clothId);
@@ -108,7 +113,6 @@ contract ClothingExchange is AccessControl {
     string memory _recommendedAge,
     Sizes _size
   ) public validPrice(_initialPrice) returns (uint) {
-    clothingCounter = clothingCounter + 1;
     Cloth storage cloth = clothing[clothingCounter];
     cloth.clothId = clothingCounter;
     cloth.name = _name;
@@ -119,6 +123,7 @@ contract ClothingExchange is AccessControl {
     cloth.recommendedAge = _recommendedAge;
     cloth.seller = payable(msg.sender);
     cloth.state = State.LISTED;
+    clothingCounter = clothingCounter + 1;
     emit LogListClothingForSale(msg.sender, clothingCounter);
     return clothingCounter;
   }
@@ -173,7 +178,7 @@ contract ClothingExchange is AccessControl {
 
   function buyClothingOnSell (
     uint clothId
-  ) isListed(clothId) paidEnough(clothing[clothId].initialPrice) public payable returns (bool) {
+  ) isListed(clothId) paidEnough(clothing[clothId].initialPrice) verifyExcessAmount(clothing[clothId].initialPrice) public payable returns (bool) {
     Cloth storage c = clothing[clothId];
     c.buyer = payable(msg.sender);
     c.state = State.SOLD;

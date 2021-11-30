@@ -8,8 +8,8 @@ let BN = web3.utils.BN;
 contract("ClothingExchange", function (accounts) {
   const [contractOwner, seller, buyer1, buyer2] = accounts;
   const emptyAddress = "0x0000000000000000000000000000000000000000";
-  const buyer1SuggestedPrice = "3000";
-  const buyer2SuggestedPrice = "88000";
+  const buyer1SuggestedPrice = "2000000000000000000";
+  const buyer2SuggestedPrice = "4000000000000000000";
 
   const name = "Blue long sleeves tshirt";
   const initialPrice = "10000";
@@ -19,7 +19,7 @@ contract("ClothingExchange", function (accounts) {
   const size = ClothingExchange.Sizes.LARGE;
 
   const name1 = "Yellow pants";
-  const initialPrice1 = "30000";
+  const initialPrice1 = "1000000000000000000";
   const description1 =
     "Aliquam orci lorem, rutrum eget felis ac, tincidunt tempus tortor. Vestibulum lorem justo, dapibus";
   const brand1 = "Brand1";
@@ -52,7 +52,7 @@ contract("ClothingExchange", function (accounts) {
         size1,
         { from: seller }
       );
-      const addedClothing = await instance.getClothingById.call(1);
+      const addedClothing = await instance.getClothingById.call(0);
       assert.equal(
         addedClothing[0],
         name,
@@ -101,12 +101,13 @@ contract("ClothingExchange", function (accounts) {
     });
 
     it("Can bargain clothing price as a potential buyer", async () => {
+      const buyerBalance = await web3.eth.getBalance(buyer1);
       const instance = await ClothingExchange.deployed(contractOwner);
-      await instance.bargainClothingPrice(1, {
+      await instance.bargainClothingPrice(0, {
         from: buyer1,
         value: buyer1SuggestedPrice,
       });
-      const newPrice = await instance.getClothingTempPrice.call(1, buyer1);
+      const newPrice = await instance.getClothingTempPrice.call(0, buyer1);
       assert.equal(
         newPrice,
         buyer1SuggestedPrice,
@@ -119,16 +120,16 @@ contract("ClothingExchange", function (accounts) {
       const buyer1Before = await web3.eth.getBalance(buyer1);
       const buyer2Before = await web3.eth.getBalance(buyer2);
       const instance = await ClothingExchange.deployed(contractOwner);
-      await instance.bargainClothingPrice(1, {
+      await instance.bargainClothingPrice(0, {
         from: buyer2,
         value: buyer2SuggestedPrice,
       });
-      await instance.confirmNewClothingPrice(1, buyer2, { from: seller });
+      await instance.confirmNewClothingPrice(0, buyer2, { from: seller });
       const sellerAfter = await web3.eth.getBalance(seller);
       const buyer1After = await web3.eth.getBalance(buyer1);
       const buyer2After = await web3.eth.getBalance(buyer2);
 
-      const cloth = await instance.getClothingById.call(1);
+      const cloth = await instance.getClothingById.call(0);
       assert.equal(
         cloth[7],
         buyer2,
@@ -146,8 +147,8 @@ contract("ClothingExchange", function (accounts) {
       );
       // Seller balance is increased by new agreed price - gas cost to confirm the transaction
       assert.isAbove(
-        Number(new BN(sellerBefore)),
         Number(new BN(sellerAfter)),
+        Number(new BN(sellerBefore)),
         "Seller's balance should be increased by the suggested price of buyer2 (ignoring gas cost)"
       );
       // Confirm and withdraw address that won the bargain
@@ -168,13 +169,13 @@ contract("ClothingExchange", function (accounts) {
       const instance = await ClothingExchange.deployed(contractOwner);
       const sellerBefore = await web3.eth.getBalance(seller);
       const buyer1Before = await web3.eth.getBalance(buyer1);
-      await instance.buyClothingOnSell(2, {
+      await instance.buyClothingOnSell(1, {
         from: buyer1,
-        value: initialPrice1,
+        value: Number(new BN(initialPrice1)) * 2,
       });
       const sellerAfter = await web3.eth.getBalance(seller);
       const buyer1After = await web3.eth.getBalance(buyer1);
-      const cloth = await instance.getClothingById.call(2);
+      const cloth = await instance.getClothingById.call(1);
       assert.equal(cloth[7], buyer1, "Buyer address is buyer1's address");
       assert.equal(
         cloth[8],
@@ -189,17 +190,17 @@ contract("ClothingExchange", function (accounts) {
       assert.isBelow(
         Number(new BN(buyer1After)),
         Number(new BN(buyer1Before).sub(new BN(initialPrice1))),
-        "Buyers balance should be reduced by more of the clothing price (gas costs)"
+        "Buyers balance should be reduced by clothing price plus gas costs"
       );
     });
 
     it("Seller can mark piece of clothing as shipped", async function () {
       const instance = await ClothingExchange.deployed(contractOwner);
       // Seller ships both items
+      await instance.shipClothing(0, { from: seller });
       await instance.shipClothing(1, { from: seller });
-      await instance.shipClothing(2, { from: seller });
-      const cloth1 = await instance.getClothingById.call(1);
-      const cloth2 = await instance.getClothingById.call(2);
+      const cloth1 = await instance.getClothingById.call(0);
+      const cloth2 = await instance.getClothingById.call(1);
       assert.equal(
         cloth1.state,
         ClothingExchange.State.SHIPPED,
@@ -215,11 +216,11 @@ contract("ClothingExchange", function (accounts) {
     it("Buyer can mark piece of clothing as received", async function () {
       const instance = await ClothingExchange.deployed(contractOwner);
       // Buyer 2 that won the bargain marks clothing as received
-      await instance.receiveClothing(1, { from: buyer2 });
+      await instance.receiveClothing(0, { from: buyer2 });
       // Buyer 1 that payed the listed price marks clothing as received
-      await instance.receiveClothing(2, { from: buyer1 });
-      const cloth1 = await instance.getClothingById.call(1);
-      const cloth2 = await instance.getClothingById.call(2);
+      await instance.receiveClothing(1, { from: buyer1 });
+      const cloth1 = await instance.getClothingById.call(0);
+      const cloth2 = await instance.getClothingById.call(1);
       assert.equal(
         cloth1.state,
         ClothingExchange.State.RECEIVED,

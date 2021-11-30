@@ -1,0 +1,11 @@
+.clothing-card {
+  min-height: 500px;
+}
+
+.clothing-description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
