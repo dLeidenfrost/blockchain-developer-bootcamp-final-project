@@ -1,0 +1,18 @@
+.navbar-brand {
+  color: white !important;
+}
+
+.bg-primary {
+  background-color: #EF896B !important;
+  color: white;
+}
+
+.btn-primary {
+  background-color: #EF896B !important;
+  color: white;
+  border-color: #FFCFC1 !important;
+}
+
+.text-primary {
+  color: #EF896B !important;
+}
