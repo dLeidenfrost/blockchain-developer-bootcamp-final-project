@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import {
   Form,
   Row,
@@ -15,13 +15,14 @@ import { AppContext } from "../../App";
 
 const NewClothItemForSaleForm = () => {
   const [loading, setLoading] = useState(false);
+  const [priceInUSD, setPriceInUSD] = useState(0);
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm();
-  const { contract, dispatch, accounts, web3 } = useContext(AppContext);
+  const { contract, dispatch, accounts, web3, state } = useContext(AppContext);
   const { ref: refName, ...clothName } = register("clothName", {
     required: "Required",
   });
@@ -77,6 +78,21 @@ const NewClothItemForSaleForm = () => {
     setLoading(false);
   };
 
+  const onChange = useCallback(
+    (e) => {
+      const value = e.target.value;
+      if (!value) {
+	setPriceInUSD("0");
+	return;
+      }
+      const price = Number(value) * state.ethInUSD;
+      if (price) {
+        setPriceInUSD(price.toFixed(2));
+      }
+    },
+    [state.ethInUSD]
+  );
+
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Row>
@@ -97,13 +113,17 @@ const NewClothItemForSaleForm = () => {
         </Col>
         <Col md="4">
           <FormGroup>
-            <Label for="clothInitialPrice">Price (eth)</Label>
+            <Label for="clothInitialPrice">
+              Price (eth){" "}
+              <small className="text-muted">(${priceInUSD} aprox.)</small>
+            </Label>
             <Input
               id="clothInitialPrice"
               placeholder="0.014"
               type="text"
               innerRef={refPrice}
               {...clothInitialPrice}
+              onChange={onChange}
             />
             {errors.clothInitialPrice && (
               <small className="text-danger">

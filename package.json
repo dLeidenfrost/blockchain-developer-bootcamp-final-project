@@ -1,6 +1,12 @@
 {
   "dependencies": {
     "@chainlink/contracts": "^0.2.2",
-    "@openzeppelin/contracts": "^4.4.0"
+    "@openzeppelin/contracts": "^4.4.0",
+    "@truffle/hdwallet-provider": "^1.7.0"
+  },
+  "scripts": {
+    "preinstall": "cd client && npm install && cd ..",
+    "app": "cd client && npm start",
+    "compile": "truffle compile"
   }
 }
