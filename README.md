@@ -92,10 +92,6 @@ There should be 8 tests passing
 
 To run the application go to:
 
-`cd client`
-
-and do
-
-`npm start`
+`npm run app`
 
 Visit http://localhost:3000
