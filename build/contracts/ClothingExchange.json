@@ -40711,10 +40711,231 @@
   },
   "networks": {
     "4": {
-      "events": {},
+      "events": {
+        "0xde0477600eae6a9400d74ad2fa3259d55706c84a4e070d578eb31e5c6f6c958e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "buyer",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "clothId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newPrice",
+              "type": "uint256"
+            }
+          ],
+          "name": "LogAddedBargain",
+          "type": "event"
+        },
+        "0xf029cc62c2e487d7d873b093f0801c5c6908090fd67b3d552bd72f17edb97941": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "buyer",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "clothId",
+              "type": "uint256"
+            }
+          ],
+          "name": "LogClothReceived",
+          "type": "event"
+        },
+        "0xc87b1a58ed0a2f6062b50edf9bca36ade4aaac15ed52c7a17cbffad7aaa2ee2b": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "seller",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "clothId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "trackingNumber",
+              "type": "string"
+            }
+          ],
+          "name": "LogClothShipped",
+          "type": "event"
+        },
+        "0x25a00cdd1befd37a459f2ea4bdcb9994c9cf8562fb15b97e519af8bc81320a88": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "buyer",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "clothId",
+              "type": "uint256"
+            }
+          ],
+          "name": "LogClothingBought",
+          "type": "event"
+        },
+        "0x28d7dc338fbcdc1b2259a6b057ec4e405005fe2b3dc1afc4111c3481bc09898d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "buyer",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "clothId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "confirmedPrice",
+              "type": "uint256"
+            }
+          ],
+          "name": "LogConfirmedNewPrice",
+          "type": "event"
+        },
+        "0xa6574571418e0054a458dc54b5f95baa2679290b3db6bbcb023fba3980726cc3": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "seller",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "clothCounter",
+              "type": "uint256"
+            }
+          ],
+          "name": "LogListClothingForSale",
+          "type": "event"
+        },
+        "0x8494f1f2555852bd711aaa536e47f3d5d6fb20fc4f6c404533291c245de76f3d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            }
+          ],
+          "name": "LogOwnerCall",
+          "type": "event"
+        },
+        "0xbd79b86ffe0ab8e8776151514217cd7cacd52c909f66475c3af44e129f0b00ff": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "previousAdminRole",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "newAdminRole",
+              "type": "bytes32"
+            }
+          ],
+          "name": "RoleAdminChanged",
+          "type": "event"
+        },
+        "0x2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            }
+          ],
+          "name": "RoleGranted",
+          "type": "event"
+        },
+        "0xf6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            }
+          ],
+          "name": "RoleRevoked",
+          "type": "event"
+        }
+      },
       "links": {},
-      "address": "0x44df4653F2f4287708CcebA906268d12EFC76082",
-      "transactionHash": "0xd950484f3318bfedbd5a2c3f5660a480a6f58cf81319deba92388f51c906d556"
+      "address": "0x7964E08E892a654661DCDf20d01dAb78FF659A12",
+      "transactionHash": "0xdabe08d9ef18d09657ec99552dba201dde667dbd1f2e2278d1439a05f68e89f9"
     },
     "1638066164087": {
       "events": {},
@@ -41411,7 +41632,7 @@
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-11-30T19:52:00.886Z",
+  "updatedAt": "2021-12-01T01:54:23.732Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

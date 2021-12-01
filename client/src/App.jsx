@@ -33,6 +33,7 @@ const App = () => {
       const accounts = await web3.eth.getAccounts();
       const networkId = await web3.eth.net.getId();
       const deployedNetwork = ClothingExchangeContract.networks[networkId];
+      // Contract address rinkeby testnet 0x7964E08E892a654661DCDf20d01dAb78FF659A12
       const instance = new web3.eth.Contract(
         ClothingExchangeContract.abi,
         deployedNetwork && deployedNetwork.address
@@ -40,7 +41,7 @@ const App = () => {
       setWeb3(web3);
       setAccounts(accounts);
       setContract(instance);
-      const response = await instance.methods.mockGetLatestPrice().call();
+      const response = await instance.methods.getLatestPrice().call();
       // Set the current eth/usd data feed price
       if (response && response._price) {
         const BN = web3.utils.BN;

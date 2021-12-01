@@ -47,8 +47,6 @@ const NewClothItemForSaleForm = () => {
     { required: "Required" }
   );
 
-  console.log(state.ethInUSD);
-
   const onSubmit = async (data) => {
     setLoading(true);
     const {
