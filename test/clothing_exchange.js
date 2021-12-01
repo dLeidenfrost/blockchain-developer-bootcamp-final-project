@@ -31,6 +31,16 @@ contract("ClothingExchange", function (accounts) {
     return assert.isTrue(true);
   });
 
+  it("Can can get latest price of ETH in USD", async () => {
+    const instance = await ClothingExchange.deployed(contractOwner);
+    const data = await instance.mockGetLatestPrice();
+    return assert.equal(
+      new BN(data[1]).toString(),
+      "458505915949",
+      "Mocked USD price is correct"
+    );
+  });
+
   describe("Use cases", () => {
     it("Can list a piece of clothing", async () => {
       const instance = await ClothingExchange.deployed(contractOwner);
@@ -101,7 +111,6 @@ contract("ClothingExchange", function (accounts) {
     });
 
     it("Can bargain clothing price as a potential buyer", async () => {
-      const buyerBalance = await web3.eth.getBalance(buyer1);
       const instance = await ClothingExchange.deployed(contractOwner);
       await instance.bargainClothingPrice(0, {
         from: buyer1,
@@ -115,7 +124,7 @@ contract("ClothingExchange", function (accounts) {
       );
     });
 
-    it("Seller can confirm the bargained price", async () => {
+    it("Seller can confirm an offer from a potential buyer", async () => {
       const sellerBefore = await web3.eth.getBalance(seller);
       const buyer1Before = await web3.eth.getBalance(buyer1);
       const buyer2Before = await web3.eth.getBalance(buyer2);
@@ -165,7 +174,7 @@ contract("ClothingExchange", function (accounts) {
       );
     });
 
-    it("Can buy through listed price directly", async () => {
+    it("Potential buyer can buy through listed price directly", async () => {
       const instance = await ClothingExchange.deployed(contractOwner);
       const sellerBefore = await web3.eth.getBalance(seller);
       const buyer1Before = await web3.eth.getBalance(buyer1);
@@ -195,12 +204,26 @@ contract("ClothingExchange", function (accounts) {
     });
 
     it("Seller can mark piece of clothing as shipped", async function () {
+      const trackingNumber1 = "975983745897";
+      const trackingNumber2 = "209347589475";
       const instance = await ClothingExchange.deployed(contractOwner);
       // Seller ships both items
-      await instance.shipClothing(0, { from: seller });
-      await instance.shipClothing(1, { from: seller });
+      await instance.shipClothing(0, trackingNumber1, { from: seller });
+      await instance.shipClothing(1, trackingNumber2, { from: seller });
       const cloth1 = await instance.getClothingById.call(0);
       const cloth2 = await instance.getClothingById.call(1);
+      const clothTrackingNumber1 = await instance.getTrackingNumber.call(0);
+      const clothTrackingNumber2 = await instance.getTrackingNumber.call(1);
+      assert.equal(
+        clothTrackingNumber1,
+        trackingNumber1,
+        `${name} has a tracking number`
+      );
+      assert.equal(
+        clothTrackingNumber2,
+        trackingNumber2,
+        `${name1} has a tracking number`
+      );
       assert.equal(
         cloth1.state,
         ClothingExchange.State.SHIPPED,

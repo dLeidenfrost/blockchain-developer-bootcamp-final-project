@@ -5,3 +5,8 @@ export const State = {
   SHIPPED: 3,
   RECEIVED: 4,
 };
+
+export const ROUTES = {
+  HOME: '/',
+  ORDERS: '/orders',
+};

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 import "@openzeppelin/contracts/access/AccessControl.sol";
-// import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
-pragma solidity ^0.8.7;
+pragma solidity 0.8.10;
 
 contract ClothingExchange is AccessControl {
 
-  // AggregatorV3Interface internal priceFeed;
+  AggregatorV3Interface internal priceFeed;
   bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
   enum State {
@@ -43,6 +43,8 @@ contract ClothingExchange is AccessControl {
     uint agreedPrice;
     address[] tempPriceAddresses;
   }
+
+  mapping (uint => string) public trackingNumbers;
 
   mapping (uint => Cloth) public clothing;
 
@@ -96,13 +98,14 @@ contract ClothingExchange is AccessControl {
   event LogAddedBargain (address buyer, uint indexed clothId, uint newPrice);
   event LogConfirmedNewPrice (address buyer, uint indexed clothId, uint confirmedPrice);
   event LogClothingBought (address buyer, uint indexed clothId);
-  event LogClothShipped (address seller, uint indexed clothId);
+  event LogClothShipped (address seller, uint indexed clothId, string trackingNumber);
   event LogClothReceived (address buyer, uint indexed clothId);
   event LogOwnerCall (address owner);
 
   constructor () {
     _setupRole(ADMIN_ROLE, msg.sender);
-    // priceFeed = AggregatorV3Interface(0x8A753747A1Fa494EC906cE90E9f37563A8AF630e);
+    // Rinkeby data feed address 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e
+    priceFeed = AggregatorV3Interface(0x8A753747A1Fa494EC906cE90E9f37563A8AF630e);
   }
 
   function listClothingOnSell (
@@ -189,10 +192,11 @@ contract ClothingExchange is AccessControl {
     return sent;
   }
 
-  function shipClothing (uint clothId) verifyCaller(clothing[clothId].seller) isSold(clothId) public {
+  function shipClothing (uint clothId, string memory trackingNumber) verifyCaller(clothing[clothId].seller) isSold(clothId) public {
     Cloth storage c = clothing[clothId];
     c.state = State.SHIPPED;
-    emit LogClothShipped(c.seller, clothId);
+    trackingNumbers[c.clothId] = trackingNumber;
+    emit LogClothShipped(c.seller, clothId, trackingNumber);
   }
 
   function receiveClothing (uint clothId) verifyCaller(clothing[clothId].buyer) isShipped(clothId) public {
@@ -229,5 +233,34 @@ contract ClothingExchange is AccessControl {
 
   function getClothingTempPrice (uint clothId, address buyer) public view returns (uint suggestedPrice) {
     suggestedPrice = clothing[clothId].tempPrice[buyer];
+  }
+
+  function getTrackingNumber (uint clothId) public view returns (string memory) {
+    return trackingNumbers[clothId];
+  }
+
+  function mockGetLatestPrice () public pure returns (uint80 _roundID, int _price, uint _startedAt, uint _timeStamp, uint80 _answeredInRound) {
+    _roundID = 36893488147419118515;
+    _price = 458505915949;
+    _startedAt = 1638293561;
+    _timeStamp = 1638293561;
+    _answeredInRound = 36893488147419118515;
+    return (_roundID, _price, _startedAt, _timeStamp, _answeredInRound);
+  }
+
+  function getLatestPrice() public view returns (uint80 _roundID, int _price, uint _startedAt, uint _timeStamp, uint80 _answeredInRound) {
+    (
+      uint80 roundID, 
+      int price,
+      uint startedAt,
+      uint timeStamp,
+      uint80 answeredInRound
+    ) = priceFeed.latestRoundData();
+    _roundID = roundID;
+    _price = price;
+    _startedAt = startedAt;
+    _timeStamp = timeStamp;
+    _answeredInRound = answeredInRound;
+    return (_roundID, _price, _startedAt, _timeStamp, _answeredInRound);
   }
 }
