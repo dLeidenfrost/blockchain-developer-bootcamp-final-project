@@ -101,6 +101,10 @@ Currently the contract is deployed on the **Rinkeby testnet**
 
 The contract address is: `0x7964E08E892a654661DCDf20d01dAb78FF659A12`
 
+The app is now available on:
+
+https://blockchain-developer-bootcamp-fin-dnlmartinezfernandez-gmailcom.vercel.app/
+
 ### Deploying the contract on Rinkeby testnet
 
 If you want to deploy the contract on rinkeby you'll need to add a
