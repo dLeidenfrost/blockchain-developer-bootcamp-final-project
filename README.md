@@ -79,7 +79,7 @@ On another terminal run:
 
 `ganache-cli`
 
-On another terminal run:
+On a terminal at the roots dir of the project run:
 
 `truffle test`
 
